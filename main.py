@@ -15,8 +15,13 @@ class Example(QWidget):
         self.initUI()
 
     def getImage(self):
-        map_request = "http://static-maps.yandex.ru/1.x/?ll=37.530887,55.703118&spn=0.002,0.002&l=map"
-        response = requests.get(map_request)
+        params = {
+            "ll": "37.530887,55.703118",
+            "spn": "0.002,0.002",
+            "l": "map"
+        }
+        map_request = "http://static-maps.yandex.ru/1.x/"
+        response = requests.get(map_request, params=params)
 
         if not response:
             print("Ошибка выполнения запроса:")
