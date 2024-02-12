@@ -62,7 +62,6 @@ class Example(QWidget):
             self.params["z"] += 1 if self.params["z"] < 21 else 0
         self.updateUI()
 
-
     def closeEvent(self, event):
         os.remove(self.map_file)
 
