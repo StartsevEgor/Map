@@ -4,6 +4,7 @@ import sys
 import requests
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
+from PyQt5.QtCore import Qt
 
 SCREEN_SIZE = [600, 450]
 
@@ -11,17 +12,18 @@ SCREEN_SIZE = [600, 450]
 class Example(QWidget):
     def __init__(self):
         super().__init__()
+        self.params = {
+            "ll": "37.530887,55.703118",
+            "l": "map",
+            "z": 17
+        }
         self.getImage()
         self.initUI()
 
     def getImage(self):
-        params = {
-            "ll": "37.530887,55.703118",
-            "spn": "0.002,0.002",
-            "l": "map"
-        }
+        print(self.params)
         map_request = "http://static-maps.yandex.ru/1.x/"
-        response = requests.get(map_request, params=params)
+        response = requests.get(map_request, params=self.params)
 
         if not response:
             print("Ошибка выполнения запроса:")
@@ -43,6 +45,22 @@ class Example(QWidget):
         self.image.resize(600, 450)
         self.image.setPixmap(self.pixmap)
 
+    def updateUI(self):
+        self.getImage()
+
+        self.pixmap = QPixmap(self.map_file)
+        # self.image = QLabel(self)
+        # self.image.move(0, 0)
+        # self.image.resize(600, 450)
+        self.image.setPixmap(self.pixmap)
+        # self.initUI()
+
+    def keyPressEvent(self, event):
+        if event.key() in [Qt.Key_Up, Qt.Key_Launch8]:
+            self.params["z"] += 1 if self.params["z"] < 21 else 0
+        if event.key() in [Qt.Key_Down, Qt.Key_Launch2]:
+            self.params["z"] -= 1 if self.params["z"] > 0 else 0
+        self.updateUI()
 
     def closeEvent(self, event):
         os.remove(self.map_file)
