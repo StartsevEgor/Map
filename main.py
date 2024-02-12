@@ -57,9 +57,9 @@ class Example(QWidget):
 
     def keyPressEvent(self, event):
         if event.key() in [Qt.Key_Up, Qt.Key_Launch8]:
-            self.params["z"] += 1 if self.params["z"] < 21 else 0
-        if event.key() in [Qt.Key_Down, Qt.Key_Launch2]:
             self.params["z"] -= 1 if self.params["z"] > 0 else 0
+        if event.key() in [Qt.Key_Down, Qt.Key_Launch2]:
+            self.params["z"] += 1 if self.params["z"] < 21 else 0
         self.updateUI()
 
     def closeEvent(self, event):
