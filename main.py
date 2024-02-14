@@ -15,7 +15,7 @@ class Example(QWidget):
         self.params = {
             "ll": "37.530887,55.703118",
             "l": "map",
-            "z": 17
+            "spn": "0.001,0.001"
         }
         self.getImage()
         self.initUI()
@@ -56,10 +56,24 @@ class Example(QWidget):
         # self.initUI()
 
     def keyPressEvent(self, event):
-        if event.key() in [Qt.Key_Up, Qt.Key_Launch8]:
-            self.params["z"] -= 1 if self.params["z"] > 0 else 0
-        if event.key() in [Qt.Key_Down, Qt.Key_Launch2]:
-            self.params["z"] += 1 if self.params["z"] < 21 else 0
+        spn_x, spn_y = list(map(float, self.params["spn"].split(",")))
+        x, y = list(map(float, self.params["ll"].split(",")))
+        if event.key() == Qt.Key_PageUp:
+            print(-180 < x - spn_x * 2, x + spn_x * 2 < 180, -90 < y - spn_y * 2, y + spn_y * 2 < 90)
+            self.params["spn"] = f"{spn_x * 2},{spn_y * 2}" if (-180 < x - spn_x * 2 and x + spn_x * 2 < 180 and -90 <
+                                                                y - spn_y * 2 and y + spn_y * 2 < 90) else self.params[
+                "spn"]
+        if event.key() == Qt.Key_PageDown:
+            self.params["spn"] = f"{spn_x / 2},{spn_y / 2}" if spn_x / 2 > 0.001 and spn_y / 2 > 0.001 else self.params[
+                "spn"]
+        if event.key() == Qt.Key_Up:
+            self.params["ll"] = f'{x},{y + spn_y / 2}' if y + spn_y < 90 else self.params["ll"]
+        if event.key() == Qt.Key_Down:
+            self.params["ll"] = f'{x},{y - spn_y / 2}' if y - spn_y > -90 else self.params["ll"]
+        if event.key() == Qt.Key_Right:
+            self.params["ll"] = f'{x + spn_x / 2},{y}' if x + spn_x < 180 else self.params["ll"]
+        if event.key() == Qt.Key_Left:
+            self.params["ll"] = f'{x - spn_x / 2},{y}' if x - spn_x > -180 else self.params["ll"]
         self.updateUI()
 
     def closeEvent(self, event):
